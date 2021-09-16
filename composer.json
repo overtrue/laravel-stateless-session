@@ -1,5 +1,5 @@
 {
-    "name": "overtrue/laravel-stateless-session-middleware",
+    "name": "overtrue/laravel-stateless-session",
     "description": "A lightweight middleware to make api routing session capable.",
     "license": "MIT",
     "authors": [
