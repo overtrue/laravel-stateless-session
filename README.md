@@ -1,31 +1,61 @@
-Laravel Package
+Laravel stateless session
 ---
 
-Laravel package template.
+A lightweight middleware to make api routing session capable.
 
 ## Installing
 
 ```shell
-$ composer require overtrue/laravel-package -vvv
-```
-
-### Migrations
-
-This step is also optional, if you want to custom the pivot table, you can publish the migration files:
-
-```php
-$ php artisan vendor:publish --provider="Overtrue\\LaravelPackage\\PackageServiceProvider" --tag=migrations
+$ composer require overtrue/laravel-stateless-session -vvv
 ```
 
 ## Usage
 
-TODO
+Add the middleware (`\Overtrue\LaravelStatelessSession\Http\Middleware\SetSessionFromHeaders`) to api route group.
 
-### Events
+```php
+protected $middlewareGroups = [
+        //...
+        'api' => [
+            \Overtrue\LaravelStatelessSession\Http\Middleware\SetSessionFromHeaders::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            'throttle:api',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+    ];
+```
 
-| **Event**                                       | **Description**                             |
-| ----------------------------------------------- | ------------------------------------------- |
-| `Overtrue\LaravelPackage\Events\SampleEvent`    | Sample description.                         |
+## Response header
+
+This middleware will set session id to response headers with name 'X-SESSION', if you want to update the header name, you can add `header` to `config/session.php`:
+
+*config/session.php*
+```php
+    'header' => 'X-SESSION',
+```
+
+## Request header
+
+The api request must set the last session id to headers. Using axios as an example, we need to listen to the api response, retrieve the session ID from response headers and store it in local storage, then retrieve it and add it to the request header:
+
+```php
+axios.interceptors.request.use(function (config) {
+    config.headers['X-SESSION'] = 'session id from your localstorage';
+    return config;
+  }, function (error) {
+    return Promise.reject(error);
+  });
+
+// Store the response session id
+axios.interceptors.response.use(function (response) {
+    if (response.headers['X-SESSION']) {
+        // store session id to localstorage
+    }
+    return response;
+  }, function (error) {
+    return Promise.reject(error);
+  });
+```
 
 ## Contributing
 
