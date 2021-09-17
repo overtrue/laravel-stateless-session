@@ -27,11 +27,11 @@ protected $middlewareGroups = [
 
 ## Response header
 
-This middleware will set session id to response headers with name 'X-SESSION', if you want to update the header name, you can add `header` to `config/session.php`:
+This middleware will set session id to response headers with name 'x-session', if you want to update the header name, you can add `header` to `config/session.php`:
 
 *config/session.php*
 ```php
-    'header' => 'X-SESSION',
+    'header' => 'x-session',
 ```
 
 ## Request header
@@ -40,7 +40,7 @@ The api request must set the last session id to headers. Using axios as an examp
 
 ```php
 axios.interceptors.request.use(function (config) {
-    config.headers['X-SESSION'] = 'session id from your localstorage';
+    config.headers['x-session'] = 'session id from your localstorage';
     return config;
   }, function (error) {
     return Promise.reject(error);
@@ -48,7 +48,7 @@ axios.interceptors.request.use(function (config) {
 
 // Store the response session id
 axios.interceptors.response.use(function (response) {
-    if (response.headers['X-SESSION']) {
+    if (response.headers['x-session']) {
         // store session id to localstorage
     }
     return response;

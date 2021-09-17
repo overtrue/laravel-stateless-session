@@ -18,7 +18,7 @@ class SetSessionFromHeaders
      */
     public function handle(Request $request, Closure $next)
     {
-        $headerName = \config('session.header', 'X-SESSION');
+        $headerName = \config('session.header', 'x-session');
         $sessionId = $request->header($headerName);
 
         if (!$sessionId) {
