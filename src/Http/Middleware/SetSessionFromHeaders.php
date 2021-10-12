@@ -21,7 +21,7 @@ class SetSessionFromHeaders
         $headerName = \config('session.header', 'x-session');
         $sessionId = $request->header($headerName);
 
-        if (!$sessionId) {
+        if (empty($sessionId) || $sessionId === 'undefined') {
             return $next($request);
         }
 
