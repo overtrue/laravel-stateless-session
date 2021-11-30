@@ -3,6 +3,8 @@ Laravel stateless session
 
 A lightweight middleware to make api routing session capable.
 
+[![Sponsor me](https://github.com/overtrue/overtrue/blob/master/sponsor-me-button-s.svg?raw=true)](https://github.com/sponsors/overtrue)
+
 ## Installing
 
 ```shell
