@@ -21,12 +21,16 @@ class SetSessionFromHeaders
         $headerName = \config('session.header', 'x-session');
         $sessionId = $request->header($headerName);
 
-        if (empty($sessionId) || $sessionId === 'undefined') {
-            return $next($request);
+        if (!empty($sessionId) && $sessionId !== 'undefined') {
+            $request->cookies->add([Session::getName() => $sessionId]);
         }
 
-        $request->cookies->add([Session::getName() => $sessionId]);
+        $response = $next($request);
 
-        return tap($next($request), fn ($response) => $response->headers->set($headerName, Session::getId()));
+        if ($request->hasSession()) {
+            $response->headers->set($headerName, $request->session()->getId());
+        }
+
+        return $response;
     }
 }
