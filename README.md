@@ -67,14 +67,26 @@ axios.interceptors.request.use((config) => {
     return config;
 });
 
-axios.interceptors.response.use((response) => {
-    if (response.headers['x-session']) {
-        sessionId = response.headers['x-session'];
+const rememberSession = (response) => {
+    const id = response?.headers?.['x-session'];
+
+    if (id) {
+        sessionId = id;
     }
+};
+
+axios.interceptors.response.use((response) => {
+    rememberSession(response);
 
     return response;
+}, (error) => {
+    rememberSession(error.response);
+
+    return Promise.reject(error);
 });
 ```
+
+The response interceptor also retains session IDs from failed HTTP responses while keeping the original error rejected. Network failures without a response leave the stored ID unchanged.
 
 For a cross-origin browser client, allow your session header in the application's CORS configuration and expose the response header through `exposed_headers` so JavaScript can read it. Treat the session ID as a credential: use HTTPS, avoid logging it, and choose client-side storage appropriate to your application's security model. Normal authentication, authorization, session regeneration, and CSRF protections remain the application's responsibility.
 
