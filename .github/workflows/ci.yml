@@ -2,35 +2,59 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
+permissions:
+  contents: read
 
 jobs:
-  phpcs:
+  tests:
+    name: PHP ${{ matrix.php }} / ${{ matrix.dependencies }}
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup PHP environment
-      uses: shivammathur/setup-php@v2
-    - name: Install dependencies
-      run: composer install
-    - name: PHPCSFixer check
-      run: composer check-style
-  phpunit:
     strategy:
+      fail-fast: false
       matrix:
-        php_version: [8.0, 8.1]
+        php: ['8.3', '8.4', '8.5']
+        dependencies: [highest]
+        include:
+          - php: '8.3'
+            dependencies: lowest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, dom, curl, fileinfo, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+      - name: Validate Composer configuration
+        run: composer validate --strict
+      - name: Install highest dependencies
+        if: matrix.dependencies == 'highest'
+        run: composer update --prefer-dist --no-interaction --prefer-stable
+      - name: Install lowest secure dependencies
+        if: matrix.dependencies == 'lowest'
+        run: composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable
+      - name: Audit dependencies
+        run: composer audit
+      - name: Run tests
+        run: composer test
+
+  style:
+    name: Code style
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup PHP environment
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php_version }}
-        coverage: xdebug
-    - name: Install dependencies
-      run: composer install
-    - name: PHPUnit check
-      run: ./vendor/bin/phpunit --coverage-text
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --prefer-stable
+      - name: Check code style
+        run: composer check-style

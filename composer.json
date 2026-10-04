@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "laravel/framework": "^9.0"
+        "php": "^8.3",
+        "laravel/framework": "^13.0"
     },
     "autoload": {
         "psr-4": {
@@ -22,39 +23,14 @@
         }
     },
     "require-dev": {
-        "mockery/mockery": "^1.4.4",
-        "phpunit/phpunit": "^9.5.8",
-        "orchestra/testbench": "^7.0",
-        "friendsofphp/php-cs-fixer": "^3.0",
-        "jetbrains/phpstorm-attributes": "^1.0"
-    },
-    "extra": {
-        "hooks": {
-            "pre-commit": [
-                "composer check-style",
-                "composer test"
-            ],
-            "pre-push": [
-                "composer test"
-            ]
-        }
+        "orchestra/testbench": "^11.0",
+        "phpunit/phpunit": "^12.5.8",
+        "friendsofphp/php-cs-fixer": "^3.89"
     },
     "scripts": {
-        "post-update-cmd": [
-            "cghooks remove",
-            "cghooks add --ignore-lock",
-            "cghooks update"
-        ],
-        "post-merge": "composer install",
-        "post-install-cmd": [
-            "cghooks remove",
-            "cghooks add --ignore-lock",
-            "cghooks update"
-        ],
-        "cghooks": "vendor/bin/cghooks",
         "check-style": "php-cs-fixer fix --using-cache=no --diff --dry-run --ansi",
         "fix-style": "php-cs-fixer fix --using-cache=no --ansi",
-        "test": "phpunit --colors"
+        "test": "phpunit --colors=always"
     },
     "scripts-descriptions": {
         "test": "Run all tests.",

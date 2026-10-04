@@ -29,7 +29,6 @@ return (new PhpCsFixer\Config())
         ],
         'return_type_declaration' => true,
         'short_scalar_cast' => true,
-        'single_blank_line_before_namespace' => true,
         'single_trait_insert_per_statement' => true,
         'ternary_operator_spaces' => true,
         'unary_operator_spaces' => true,
